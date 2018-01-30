@@ -16,15 +16,15 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-data "aws_availability_zones" "available" {}
+resource "random_pet" "main" {}
 
 resource "aws_vpc" "main" {
   cidr_block           = "10.19.0.0/16"
   enable_dns_hostnames = true
 
   tags {
-    Name        = "${var.config_name}_aws_vpc_main"
-    Config_Name = "${var.config_name}"
+    Name        = "${random_pet.main.id}_aws_vpc_main"
+    Config_Name = "${random_pet.main.id}"
   }
 }
 
@@ -32,8 +32,8 @@ resource "aws_internet_gateway" "main" {
   vpc_id = "${aws_vpc.main.id}"
 
   tags {
-    Name        = "${var.config_name}_aws_internet_gateway_main"
-    Config_Name = "${var.config_name}"
+    Name        = "${random_pet.main.id}_aws_internet_gateway_main"
+    Config_Name = "${random_pet.main.id}"
   }
 }
 
@@ -46,8 +46,8 @@ resource "aws_route_table" "main" {
   }
 
   tags {
-    Name        = "${var.config_name}_aws_route_table_main"
-    Config_Name = "${var.config_name}"
+    Name        = "${random_pet.main.id}_aws_route_table_main"
+    Config_Name = "${random_pet.main.id}"
   }
 }
 
@@ -59,7 +59,6 @@ resource "aws_route_table_association" "main" {
 resource "aws_subnet" "public" {
   cidr_block              = "10.19.1.0/24"
   vpc_id                  = "${aws_vpc.main.id}"
-  availability_zone       = "${data.aws_availability_zones.available.names[0]}"
   map_public_ip_on_launch = true
 }
 
@@ -68,12 +67,6 @@ data "template_file" "user_data" {
 
   vars {
     pet_name = "${random_pet.main.id}"
-  }
-}
-
-resource "random_pet" "main" {
-  keepers = {
-    config_name = "${var.config_name}"
   }
 }
 
@@ -89,14 +82,14 @@ resource "aws_instance" "main" {
   ]
 
   tags {
-    Name        = "${var.config_name}_aws_instance"
-    Config_Name = "${var.config_name}"
+    Name        = "${random_pet.main.id}_aws_instance"
+    Config_Name = "${random_pet.main.id}"
   }
 }
 
 resource "aws_security_group" "main" {
-  name        = "${var.config_name}_aws_security_group_public"
-  description = "${var.config_name}_aws_security_group_public"
+  name        = "${random_pet.main.id}_aws_security_group_public"
+  description = "${random_pet.main.id}_aws_security_group_public"
   vpc_id      = "${aws_vpc.main.id}"
 
   ingress {
@@ -121,7 +114,7 @@ resource "aws_security_group" "main" {
   }
 
   tags {
-    Name        = "${var.config_name}_aws_security_group_public"
-    Config_Name = "${var.config_name}"
+    Name        = "${random_pet.main.id}_aws_security_group_public"
+    Config_Name = "${random_pet.main.id}"
   }
 }
