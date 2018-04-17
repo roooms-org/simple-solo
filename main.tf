@@ -85,6 +85,8 @@ resource "aws_instance" "main" {
     Name        = "${random_pet.main.id}_aws_instance"
     Config_Name = "${random_pet.main.id}"
     Type        = "${var.instance_type}"
+    owner       = "dan@hashicorp.com"
+    ttl         = "-1"
   }
 }
 
